@@ -1,0 +1,9 @@
+.idea/
+nails/
+nails_augment/
+nails.tar.gz
+nails_augment.tar.gz
+*.JPG
+*png
+.ipynb_checkpoints/
+.DS_Store
