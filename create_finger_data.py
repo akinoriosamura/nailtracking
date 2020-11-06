@@ -66,6 +66,15 @@ def clip_bb_img(bb, img, ms):
 
     return imgT, msT
 
+def save_sample(img, mask, tag):
+    try:
+        dst = img + mask
+        dst = cv2.addWeighted(img, 0.5, mask, 0.5, 0)
+    except:
+        import pdb; pdb.set_trace()
+    cv2.imwrite("./sample_masked_" + tag + ".jpg", dst)
+
+
 if __name__ == '__main__':
     model = tf.Graph()
 
@@ -94,7 +103,7 @@ if __name__ == '__main__':
             numDetections = model.get_tensor_by_name("num_detections:0")
             drawboxes = []
 
-            dataset = 'nails'
+            dataset = 'nails_segmentation'
             save_dataset = 'nails_augment'          
             mask_files = os.listdir(os.path.join(dataset, 'mask'))
             raw_files = os.listdir(os.path.join(dataset, 'raw'))
@@ -105,6 +114,7 @@ if __name__ == '__main__':
                 mask_p = os.path.join(dataset, 'mask/'+f)
                 image = cv2.imread(image_p)
                 mask = cv2.imread(mask_p)
+                save_sample(image, mask, "1")
                 (H, W) = image.shape[:2]
                 # print("H,W:", (H, W))
                 _output = image.copy()
@@ -158,8 +168,10 @@ if __name__ == '__main__':
                     #                COLORS[0], 2)
                     #cv2.rectangle(output_mask, (new_bb[0], new_bb[1]), (new_bb[2], new_bb[3]),
                     #                COLORS[0], 2)
+                    save_sample(newimg, newmask, "new"+str(idx))
                     cv2.imwrite(os.path.join(save_dataset, 'raw/'+f[:-4]+'_'+str(idx)+'.png'), newimg)
                     cv2.imwrite(os.path.join(save_dataset, 'mask/'+f[:-4]+'_'+str(idx)+'.png'), newmask)
                 print("fininshL: ", f)
+                # import pdb; pdb.set_trace()
     #cv2.imwrite("labeld.jpg", output)
     #cv2.imwrite("labeld_mask.jpg", output_mask)
